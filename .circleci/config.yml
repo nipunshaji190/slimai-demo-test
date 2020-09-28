@@ -34,46 +34,7 @@ jobs:
             import json
             import time
 
-            mode = 'build'
-
-            def build_and_publish_image(args):
-
-                try:
-                    url = args[args.index('--path')+1]
-                    tag = args[args.index('--tag')+1]
-                    namespace = args[args.index('--namespace')+1]
-                    app_name = args[args.index('--appname')+1]
-                except:
-                    print("Argument Error\nExiting..")
-                    sys.exit()
-
-                docker_username = os.environ.get('DOCKER_USERNAME','')
-                docker_password = os.environ.get('DOCKER_PASSWORD','')
-                client = docker.from_env()
-                try:
-                    client.login(username=docker_username, password=docker_password)
-                except dockerError.APIError:
-                    print("Error Logging into docker client...\nExiting...")
-                    sys.exit()
-                print("Building docker image..")
-                try:
-                    image,generator = client.images.build(tag=f"{namespace}/{app_name}:{tag}", path=url)
-                except dockerError.BuildError:
-                    print("Error building docker image..\nExiting...")
-                    sys.exit()
-                except dockerError.APIError:
-                    print("Error with docker API...\nExiting...")
-                    sys.exit()
-                print(f"Image build success, Image id: {image.id}")
-                print(f"Pushing image to repo : {namespace}/{app_name}")
-                try:
-                    for line in client.images.push(f"{namespace}/{app_name}", tag=tag, stream=True):
-                        print(line)
-                except dockerError.APIError:
-                    print("Error with docker API...\nExiting...")
-                    sys.exit()
-                print(f"Image pushed successfully to repo : {namespace}/{app_name}, with tag : {tag}")
-                return
+            mode = 'slim'
 
             def slim_and_push(args):
 
@@ -85,7 +46,7 @@ jobs:
                     print("Argument Error\nExiting..")
                     sys.exit()
 
-                base_url = 'https://dev-platform.saas.getslim.ai'
+                base_url = os.environ.get('BASE_URL','')
 
                 docker_username = os.environ.get('DOCKER_USERNAME','')
                 docker_password = os.environ.get('DOCKER_PASSWORD','')
@@ -212,24 +173,16 @@ jobs:
                     sys.exit()
                 print("Image pushed successfully")
                 return
-
-            mode = sys.argv[1]
-            if mode == 'build':
-                build_and_publish_image(sys.argv)
-            elif mode == 'slim':
+            try:
+              mode = sys.argv[1]
+            except:
+              print("Please specify a mode to work with!!!\nExiting")
+              sys.exit()
+            if mode == 'slim':
                 slim_and_push(sys.argv)
             else:
-                client = docker.from_env()
-                image = client.images.get("nipunshaji190/demo:latest")
-                print("image name ",image.tags)
                 print("Invalid mode!!!\nExiting..")
                 sys.exit()
             EOF
-            python3 $PYTHON_PLUGIN slim --namespace nipunshaji190 --appname demo --tag test5
+            python3 $PYTHON_PLUGIN slim --namespace $NAMESPACE --appname $APPNAME --tag $TAG
       - run: docker images
-
-workflows:
-  slim_and_push_image:
-    jobs:
-      - slim:
-          context: plugin
