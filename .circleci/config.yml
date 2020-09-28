@@ -9,7 +9,7 @@ jobs:
     steps:
       - checkout
       - setup_remote_docker
-      - run: docker run --privileged -e DOCKER_USERNAME=$DOCKER_USERNAME DOCKER_PASSWORD=$DOCKER_PASSWORD SLIM_AI_USERNAME=$SLIM_AI_USERNAME SLIM_AI_PASSWORD=$SLIM_AI_PASSWORD SLIM_ORG_ID=$SLIM_ORG_ID nipunshaji190/plugin:1 slim --namespace nipunshaji190 --appname demo --tag test5
+      - run: docker run --privileged -e DOCKER_USERNAME=$DOCKER_USERNAME -e DOCKER_PASSWORD=$DOCKER_PASSWORD -e SLIM_AI_USERNAME=$SLIM_AI_USERNAME -e SLIM_AI_PASSWORD=$SLIM_AI_PASSWORD -e SLIM_ORG_ID=$SLIM_ORG_ID nipunshaji190/plugin:1 slim --namespace nipunshaji190 --appname demo --tag test5
 
 #new change4
 workflows:
