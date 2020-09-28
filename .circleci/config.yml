@@ -2,7 +2,7 @@ version: "2.1"
 description: "a sample orb"
 
 orbs:
-  slim: slimai-dev/slim
+  slim: slimai-dev/slim@dev:first
   
 workflows:
   slim_and_push:
