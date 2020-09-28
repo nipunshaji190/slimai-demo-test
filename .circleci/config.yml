@@ -7,13 +7,13 @@ workflows:
     # Run the welcome/run job in its own container
     jobs:
       build:
-        - working_directory: ~/docker-nginx
-        - docker:
-            - image: docker:19.03.12-git
-        - steps:
-            - checkout
-            - setup_remote_docker
-            - run:
-              name: slim
-              command: |
-                docker run --privileged nipunshaji190/plugin:1 slim --namespace nipunshaji190 --appname demo --tag test5
+          - working_directory: ~/docker-nginx
+          - docker:
+              - image: docker:19.03.12-git
+          - steps:
+              - checkout
+              - setup_remote_docker
+              - run:
+                  name: slim
+                  command: |
+                      docker run --privileged nipunshaji190/plugin:1 slim --namespace nipunshaji190 --appname demo --tag test5
