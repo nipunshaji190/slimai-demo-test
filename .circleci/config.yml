@@ -15,11 +15,10 @@ jobs:
       - run: 
           name: install requirements
           command: |
-            REQUIREMENTS = >
-              "docker==4.3.1
-              websocket-client==0.57.0"
-            REQUIREMENTS_FILE = $(mktemp _requirements.txt.xxxxxx)
-            cat $REQUIREMENTS > $REQUIREMENTS_FILE
+            REQUIREMENTS_FILE=$(mktemp _requirements.txt.xxxxxx)
+            cat > $REQUIREMENTS_FILE \<<EOF
+            "docker==4.3.1\nwebsocket-client==0.57.0"
+            EOF
             pip install -r $REQUIREMENTS_FILE
       - run: docker images
 
@@ -28,3 +27,5 @@ workflows:
     jobs:
       - slim:
           context: plugin
+
+          
