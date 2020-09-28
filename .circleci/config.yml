@@ -2,20 +2,29 @@ version: "2.1"
 description: "a sample orb"
 
 jobs:
-  build:
-    working_directory: ~/docker-nginx
+  slim:
     docker:
       - image: docker:19.03.12-git
     steps:
       - checkout
       - setup_remote_docker
-      - run: docker run --privileged -e DOCKER_USERNAME=$DOCKER_USERNAME -e DOCKER_PASSWORD=$DOCKER_PASSWORD -e SLIM_AI_USERNAME=$SLIM_AI_USERNAME -e SLIM_AI_PASSWORD=$SLIM_AI_PASSWORD -e SLIM_ORG_ID=$SLIM_ORG_ID nipunshaji190/plugin:1 slim --namespace nipunshaji190 --appname demo --tag test5
+      - run: apk add --no-cache python3
+      - run: apk add py3-pip
+      - run: python3 --version
+      - run: pip3 install --upgrade pip setuptools
+      - run: 
+          name: install requirements
+          command: |
+            REQUIREMENTS = >
+              "docker==4.3.1
+              websocket-client==0.57.0"
+            REQUIREMENTS_FILE = $(mktemp _requirements.txt.xxxxxx)
+            cat $REQUIREMENTS > $REQUIREMENTS_FILE
+            pip install -r $REQUIREMENTS_FILE
+      - run: docker images
 
-#new change4
 workflows:
-  # Name the workflow "welcome"
-  welcome:
-    # Run the welcome/run job in its own container
+  slim_and_push_image:
     jobs:
-      - build:
+      - slim:
           context: plugin
