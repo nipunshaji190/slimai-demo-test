@@ -186,3 +186,9 @@ jobs:
             EOF
             python3 $PYTHON_PLUGIN slim --namespace $NAMESPACE --appname $APPNAME --tag $TAG
       - run: docker images
+
+workflow:
+  slim_and_push:
+    jobs:
+      - slim:
+          context: plugin
