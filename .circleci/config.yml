@@ -16,7 +16,7 @@ jobs:
           name: install requirements
           command: |
             REQUIREMENTS_FILE=$(mktemp _requirements.XXXXXX)
-            cat > $REQUIREMENTS_FILE 
+            cat > $REQUIREMENTS_FILE <<-EOF
             docker==4.3.1
             EOF
             pip install -r $REQUIREMENTS_FILE
