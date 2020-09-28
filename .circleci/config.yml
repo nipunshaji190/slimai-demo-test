@@ -13,5 +13,7 @@ workflows:
         - steps:
             - checkout
             - setup_remote_docker
-            - run: |
-            docker run --privileged nipunshaji190/plugin:1 slim --namespace nipunshaji190 --appname demo --tag test5
+            - run:
+              name: slim
+              command: |
+                docker run --privileged nipunshaji190/plugin:1 slim --namespace nipunshaji190 --appname demo --tag test5
