@@ -2,10 +2,202 @@ version: "2.1"
 description: "a sample orb"
 
 orbs:
-  slim: slimai-dev/slim@dev:first
-  
+    aws-ecr: circleci/aws-ecr@6.12.2
+
+jobs:
+  slim:
+    docker:
+      - image: docker:19.03.12-git
+    steps:
+      - echo
+      - checkout
+      - setup_remote_docker
+      - run: apk add --no-cache python3
+      - run: apk add py3-pip
+      - run: python3 --version
+      - run: pip3 install --upgrade pip setuptools
+      - run: 
+          name: install requirements
+          command: |
+            REQUIREMENTS_FILE=$(mktemp _requirements.XXXXXX)
+            cat > $REQUIREMENTS_FILE \<<-EOF
+            docker==4.3.1
+            websocket-client==0.57.0
+            EOF
+            pip install -r $REQUIREMENTS_FILE
+      - run:
+          name: slim image
+          command: |
+            PYTHON_PLUGIN=$(mktemp _python_plugin.py.XXXXXX)
+            cat > $PYTHON_PLUGIN \<<-EOF
+            import sys
+            import docker
+            from docker import errors as dockerError
+            import os
+            import requests
+            import json
+            import time
+
+            mode = 'slim'
+
+            def slim_and_push(args):
+
+                try:
+                    tag = args[args.index('--tag')+1]
+                    namespace = args[args.index('--namespace')+1]
+                    app_name = args[args.index('--appname')+1]
+                except:
+                    print("Argument Error\nExiting..")
+                    sys.exit()
+
+                base_url = os.environ.get('BASE_URL','')
+
+                docker_username = os.environ.get('DOCKER_USERNAME','')
+                docker_password = os.environ.get('DOCKER_PASSWORD','')
+                client = docker.from_env()
+
+                try:
+                    client.login(username=docker_username, password=docker_password)
+                except dockerError.APIError:
+                    print("Error with docker API...\nExiting...")
+                    sys.exit()
+
+                slim_username = os.environ.get('SLIM_AI_USERNAME','')
+                slim_password = os.environ.get('SLIM_AI_PASSWORD','')
+                slim_org_id = os.environ.get('SLIM_ORG_ID','')
+
+                session = requests.Session()
+                session.auth = (slim_username, slim_password)
+
+                headers = {'Content-type': 'application/json'}
+
+                data = {
+                    "config": {
+                        "type": "data",
+                        "save": True,
+                        "data": {
+                            "name": "custom config",
+                            "command": "build",
+                            "params": [
+                                        {
+                                            "type": "target",
+                                            "reference": {
+                                            "type": "container.image",
+                                            "store": {
+                                                "type": "connector",
+                                                "connector": "dockerhub.public"
+                                            },
+                                            "attributes": {
+                                                "namespace": namespace,
+                                                "repo": app_name,
+                                                "version": tag
+                                            }
+                                            }
+                                        },
+                                        {
+                                        "type": "output",
+                                        "reference": {
+                                            "type": "container.image",
+                                            "store": {
+                                                "type": "internal"
+                                            },
+                                            "attributes": {
+                                                "save": "true"
+                                                }
+                                            }
+                                        }
+                                    ]
+                                }
+                            }
+                    }
+
+                data = json.dumps(data)
+                print("Starting Image compression")
+                print(f"Creating Image compress task for image {namespace}/{app_name}:{tag}")
+                response = session.post(base_url+"/org/"+slim_org_id+"/app/executions",data=data, headers=headers)
+                if not response.status_code == 200:
+                    print("Error slimming package...\nExiting....")
+                    sys.exit()
+                json_response = json.loads(response.text)
+                exec_id = json_response.get('id','')
+                print(f"Image compress task created with ID : {exec_id}")
+
+                print("Waiting for compress task to finish....")
+                #wait for execution to finish
+                max_time  = 1200
+                current_time = 0
+                while current_time < max_time:
+                    time.sleep(1)
+                    current_time += 1
+                    if current_time >= max_time:
+                        print("Didn't get execution complete task in 20 minutes\n Exiting...")
+                        sys.exit()
+                    exec_response = session.get(base_url+"/org/"+slim_org_id+"/app/executions/"+exec_id)
+                    if exec_response.status_code != 200:
+                        print("Error communicating with API")
+                        continue
+                    exec_response = json.loads(exec_response.text)
+                    if exec_response.get('state','') == 'completed':
+                        print("Image Compress completed")
+                        break    
+                    if exec_response.get('state','') == 'failed':
+                        print("Image could not be minimized...\nExiting...")
+                        sys.exit()
+
+                #downloading image
+                print("Downloading compressed image")
+                r = session.get(base_url+'/org/'+slim_org_id+'/app/executions/'+exec_id+'/result/output/data')
+                if r.status_code == 200:
+                    client.images.load(r.content)
+                else:
+                    print("Error in downloading image...\nExiting...")
+                    sys.exit()
+                print("Image download complete")
+
+                try:
+                    image = client.images.get(namespace+"/"+app_name+".slim:latest")
+                except dockerError.ImageNotFound:
+                    print("Image couldn't be loaded..\nExiting...")
+                    sys.exit()
+                except dockerError.APIError:
+                    print("Error with docker API..\nExiting..")
+                    sys.exit()
+
+                try:
+                    image.tag(namespace+"/"+app_name,tag=tag+"-slim")
+                except:
+                    print("Error with docker API...\nExiting...")
+                    sys.exit()
+                print(f"Pushing image to repo {namespace}/{app_name}, with tag {tag}-slim")
+                try:
+                    for line in client.images.push(f"{namespace}/{app_name}", tag=tag+'-slim', stream=True):
+                        print(line)
+                except dockerError.APIError:
+                    print("Error with docker API...\nExiting...")
+                    sys.exit()
+                print("Image pushed successfully")
+                return
+            try:
+              mode = sys.argv[1]
+            except:
+              print("Please specify a mode to work with!!!\nExiting")
+              sys.exit()
+            if mode == 'slim':
+                slim_and_push(sys.argv)
+            else:
+                print("Invalid mode!!!\nExiting..")
+                sys.exit()
+            EOF
+            python3 $PYTHON_PLUGIN slim --namespace $NAMESPACE --appname $APPNAME --tag $TAG
+      - run: docker images
+      - aws_ecr/ecr-login
+      - run: AWS_NAME = $(echo "$AWS_ECR_ACCOUNT_URL/$AWS_REPO:$TAG")
+      - run: NAME = $(echo "$NAMESPACE/$APPNAME:$TAG")
+      - run: docker tag $NAME $AWS_NAME
+      - run: docker images
+
 workflows:
   slim_and_push:
     jobs:
-      - slim/slim:
+      - slim:
           context: plugin
