@@ -196,8 +196,8 @@ jobs:
       - run: docker images
       - aws-ecr/push-image:
           account-url: ASW_ECR_ACCOUNT_URL
-          repo: AWS_REPO
-          tag: TAG
+          repo: $AWS_REPO
+          tag: $TAG
 
 workflows:
   slim_and_push:
