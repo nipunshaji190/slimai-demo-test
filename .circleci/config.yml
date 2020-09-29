@@ -7,14 +7,10 @@ orbs:
 jobs:
   slim:
     docker:
-      - image: docker:19.03.12-git
+      - image: circleci/python:3.8
     steps:
       - checkout
       - setup_remote_docker
-      - run: apk add --no-cache python3
-      - run: apk add py3-pip
-      - run: apk add curl
-      - run: apk add sudo
       - run: python3 --version
       - run: pip3 install --upgrade pip setuptools
       - run: 
@@ -191,10 +187,12 @@ jobs:
             EOF
             python3 $PYTHON_PLUGIN slim --namespace $NAMESPACE --appname $APPNAME --tag $TAG
       - run: docker images
-      - aws-ecr/ecr-login
-      - run: AWS_NAME = $(echo "$AWS_ECR_ACCOUNT_URL/$AWS_REPO:$TAG")
-      - run: NAME = $(echo "$NAMESPACE/$APPNAME:$TAG")
-      - run: docker tag $NAME $AWS_NAME
+      - aws-ecr/ecr-login:
+          account-url: ASW_ECR_ACCOUNT_URL
+          aws-access-key-id: AWS_ACCESS_KEY_ID
+          aws-secret-access-key: AWS_SECRET_ACCESS_KEY
+          region: AWS_REGION
+      - run: docker tag $NAMESPACE/$APPNAME:$TAG $AWS_ECR_ACCOUNT_URL/$AWS_REPO:$TAG
       - run: docker images
 
 workflows:
