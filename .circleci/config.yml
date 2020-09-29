@@ -194,6 +194,10 @@ jobs:
           region: AWS_REGION
       - run: docker tag $NAMESPACE/$APPNAME:$TAG-slim $ASW_ECR_ACCOUNT_URL/$AWS_REPO:$TAG
       - run: docker images
+      - aws-ecr/push-image:
+          account-url: ASW_ECR_ACCOUNT_URL
+          repo: AWS_REPO
+          tag: TAG
 
 workflows:
   slim_and_push:
