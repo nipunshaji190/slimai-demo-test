@@ -11,6 +11,9 @@ jobs:
     steps:
       - checkout
       - setup_remote_docker
+      - run: docker build -t $NAMESPACE/$REPO:$TAG .
+      - run: echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin
+      - run: docker push $NAMESPACE/$REPO:$TAG
       - run: python3 --version
       - run: pip3 install --upgrade pip setuptools
       - run: 
@@ -185,19 +188,19 @@ jobs:
                 print("Invalid mode!!!\nExiting..")
                 sys.exit()
             EOF
-            python3 $PYTHON_PLUGIN slim --namespace $NAMESPACE --appname $APPNAME --tag $TAG
+            python3 $PYTHON_PLUGIN slim --namespace $NAMESPACE --appname $REPO --tag $TAG
       - run: docker images
       - aws-ecr/ecr-login:
-          account-url: ASW_ECR_ACCOUNT_URL
+          account-url: AWS_ECR_ACCOUNT_URL
           aws-access-key-id: AWS_ACCESS_KEY_ID
           aws-secret-access-key: AWS_SECRET_ACCESS_KEY
           region: AWS_REGION
-      - run: docker tag $NAMESPACE/$APPNAME:$TAG-slim $ASW_ECR_ACCOUNT_URL/$AWS_REPO:$TAG
+      - run: docker tag $NAMESPACE/$REPO:$TAG-slim $AWS_ECR_ACCOUNT_URL/$REPO:$TAG
       - run: docker images
       - aws-ecr/push-image:
-          account-url: ASW_ECR_ACCOUNT_URL
-          repo: $AWS_REPO
-          tag: $TAG
+          account-url: AWS_ECR_ACCOUNT_URL
+          repo: $REPO
+          tag: $TAG-slim
 
 workflows:
   slim_and_push:
