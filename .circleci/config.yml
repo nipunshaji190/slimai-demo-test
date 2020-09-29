@@ -1,5 +1,5 @@
 version: "2.1"
-description: "a sample orb"
+description: "a sample orb-a"
 
 orbs:
     aws-ecr: circleci/aws-ecr@6.12.2
