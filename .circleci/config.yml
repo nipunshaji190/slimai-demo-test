@@ -192,7 +192,7 @@ jobs:
           aws-access-key-id: AWS_ACCESS_KEY_ID
           aws-secret-access-key: AWS_SECRET_ACCESS_KEY
           region: AWS_REGION
-      - run: docker tag $NAMESPACE/$APPNAME-slim:$TAG $ASW_ECR_ACCOUNT_URL/$AWS_REPO:$TAG
+      - run: docker tag $NAMESPACE/$APPNAME:$TAG-slim $ASW_ECR_ACCOUNT_URL/$AWS_REPO:$TAG
       - run: docker images
 
 workflows:
