@@ -9,7 +9,6 @@ jobs:
     docker:
       - image: docker:19.03.12-git
     steps:
-      - echo
       - checkout
       - setup_remote_docker
       - run: apk add --no-cache python3
