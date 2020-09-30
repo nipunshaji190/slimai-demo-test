@@ -31,8 +31,8 @@ workflows:
           cluster-name: $PRE_CLUSTER_NAME
           container-image-name-updates: 'container=$PRE_CONTAINER_NAME,tag=$PRE_TAG'  
           force-new-deployment: true
-       - slim/slim:
-           requires:
+      - slim/slim:
+          requires:
              - aws-ecs/deploy-service-update
-           context: plugin
+          context: plugin
     
