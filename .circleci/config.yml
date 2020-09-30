@@ -39,11 +39,11 @@ workflows:
           slim-ai-username: SLIM_AI_USERNAME
           slim-ai-password: SLIM_AI_PASSWORD
           slim-ai-org-id: SLIM_ORG_ID
-          aws-repo-name: REPO
-          docker-repo-name: REPO
+          aws-repo-name: $REPO
+          docker-repo-name: $REPO
           aws-ecr-account-url: AWS_ECR_ACCOUNT_URL
-          docker-namespace: NAMESPACE
-          tag: TAG
+          docker-namespace: $NAMESPACE
+          tag: $TAG
           aws-access-key-id: AWS_ACCESS_KEY_ID
           aws-secret-access-key: AWS_SECRET_ACCESS_KEY
           aws-region: AWS_REGION
