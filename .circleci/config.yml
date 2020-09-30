@@ -190,8 +190,9 @@ jobs:
           tag: $TAG-slim
       - aws-ecs/update-service:
           family: '$SLIM_AWS_FAMILY'
-          cluster-name: '$SLIM_AWS_CLUSTER'
-          container-image-name-updates: 'container=$SLIM_AWS_SERVICE,tag=$TAG-slim'
+          cluster-name: '$SLIM_AWS_CLUSTER_NAME'
+          service-name: '$SLIM_AWS_SERVICE_NAME'
+          container-image-name-updates: 'container=$SLIM_AWS_CONTAINER,tag=$TAG-slim'
           force-new-deployment: true
 
 workflows:
