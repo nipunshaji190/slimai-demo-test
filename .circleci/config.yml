@@ -188,6 +188,14 @@ jobs:
           account-url: AWS_ECR_ACCOUNT_URL
           repo: $REPO
           tag: $TAG-slim
+      - aws-cli/configure:
+          aws-access-key-id: $AWS_ACCESS_KEY_ID
+          aws-region: $AWS_REGION
+      - aws-ecs/update-service:
+          family: '$SLIM_AWS_FAMILY'
+          cluster-name: '$SLIM_AWS_CLUSTER'
+          container-image-name-updates: 'container=$SLIM_AWS_SERVICE,tag=$TAG-slim'
+          force-new-deployment: true
 
 workflows:
   slim_and_push:
