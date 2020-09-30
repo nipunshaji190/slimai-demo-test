@@ -1,5 +1,5 @@
 version: "2.1"
-description: "a sample orb-abcdefghijklm"
+description: "a sample orb-abcdefghijklmn"
 
 orbs:
     slim: slimai-dev/slim@dev:first
