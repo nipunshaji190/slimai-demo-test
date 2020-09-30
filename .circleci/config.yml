@@ -10,20 +10,21 @@ workflows:
   slim_and_push:
     jobs:
       - aws-ecr/build-and-push-image:
-          account-url: $AWS_ECR_ACCOUNT_URL
-          aws-access-key-id: $AWS_ACCESS_KEY_ID
-          aws-secret-access-key: $AWS_SECRET_ACCESS_KEY
-          # context: myContext
+          account-url: AWS_ECR_ACCOUNT_URL
+          aws-access-key-id: AWS_ACCESS_KEY_ID
+          aws-secret-access-key: AWS_SECRET_ACCESS_KEY
+          context: plugin
           create-repo: true
           dockerfile: Dockerfile
           no-output-timeout: 20m
-          region: $AWS_REGION
+          region: AWS_REGION
           repo: $PRE_REPO
           skip-when-tags-exist: false
           tag: $TAG
       - aws-ecs/deploy-service-update:
           requires:
             - aws-ecr/build-and-push-image
+          context: plugin
           aws-access-key-id: $AWS_ACCESS_KEY
           aws-secret-access-key: $AWS_SECRET_ACCESS_KEY
           aws-region: $AWS_REGION 
