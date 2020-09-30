@@ -18,9 +18,9 @@ workflows:
           dockerfile: Dockerfile
           no-output-timeout: 20m
           region: AWS_REGION
-          repo: PRE_REPO
+          repo: $PRE_REPO
           skip-when-tags-exist: false
-          tag: TAG
+          tag: $TAG
       - aws-ecs/deploy-service-update:
           requires:
             - aws-ecr/build-and-push-image
@@ -28,9 +28,9 @@ workflows:
           aws-access-key-id: AWS_ACCESS_KEY
           aws-secret-access-key: AWS_SECRET_ACCESS_KEY
           aws-region: AWS_REGION 
-          family: PRE_FAMILY
-          service-name: PRE_SERVICE_NAME
-          cluster-name: PRE_CLUSTER_NAME
+          family: $PRE_FAMILY
+          service-name: $PRE_SERVICE_NAME
+          cluster-name: $PRE_CLUSTER_NAME
           container-image-name-updates: 'container=$PRE_CONTAINER_NAME,tag=$TAG'    
           force-new-deployment: true
       - slim/slim:
