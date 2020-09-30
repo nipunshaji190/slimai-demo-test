@@ -34,6 +34,7 @@ workflows:
       - slim/slim:
 #           requires:
 #              - aws-ecs/deploy-service-update
+          context: plugin
           dockerhub-username: DOCKER_USERNAME
           dockerhub-password: DOCKER_PASSWORD
           slim-ai-username: SLIM_AI_USERNAME
