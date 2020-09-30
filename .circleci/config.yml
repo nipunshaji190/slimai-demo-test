@@ -10,28 +10,28 @@ workflows:
   slim_and_push:
     jobs:
       - aws-ecr/build-and-push-image:
-          account-url: AWS_ECR_ACCOUNT_URL
-          aws-access-key-id: AWS_ACCESS_KEY_ID
-          aws-secret-access-key: AWS_SECRET_ACCESS_KEY
+          account-url: PRE_AWS_ECR_ACCOUNT_URL
+          aws-access-key-id: PRE_AWS_ACCESS_KEY_ID
+          aws-secret-access-key: PRE_AWS_SECRET_ACCESS_KEY
           context: plugin
           create-repo: true
           dockerfile: Dockerfile
           no-output-timeout: 20m
-          region: AWS_REGION
+          region: PRE_AWS_REGION
           repo: $PRE_REPO
           skip-when-tags-exist: false
-          tag: $TAG
+          tag: $PRE_TAG
       - aws-ecs/deploy-service-update:
           requires:
             - aws-ecr/build-and-push-image
           context: plugin
-          aws-access-key-id: AWS_ACCESS_KEY_ID
-          aws-secret-access-key: AWS_SECRET_ACCESS_KEY
-          aws-region: AWS_REGION 
+          aws-access-key-id: PRE_AWS_ACCESS_KEY_ID
+          aws-secret-access-key: PRE_AWS_SECRET_ACCESS_KEY
+          aws-region: PRE_AWS_REGION 
           family: $PRE_FAMILY
           service-name: $PRE_SERVICE_NAME
           cluster-name: $PRE_CLUSTER_NAME
-          container-image-name-updates: 'container=$PRE_CONTAINER_NAME,tag=$TAG'    
+          container-image-name-updates: 'container=$PRE_CONTAINER_NAME,tag=$PRE_TAG'    
           force-new-deployment: true
       - slim/slim:
           context: plugin
