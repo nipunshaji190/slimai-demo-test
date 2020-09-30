@@ -192,6 +192,6 @@ jobs:
 workflows:
   slim_and_push:
     jobs:
-        slim:
+      - slim:
             context: plugin
     
