@@ -3,6 +3,7 @@ description: "a sample orb-abc"
 
 orbs:
     aws-ecr: circleci/aws-ecr@6.12.2
+    aws-ecs: circleci/aws-ecs@0.0.15
 
 jobs:
   slim:
