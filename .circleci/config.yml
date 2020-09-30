@@ -22,8 +22,8 @@ workflows:
 #           skip-when-tags-exist: false
 #           tag: $PRE_TAG
       - aws-ecs/deploy-service-update:
-          requires:
-            - aws-ecr/build-and-push-image
+#           requires:
+#             - aws-ecr/build-and-push-image
           context: plugin
           aws-access-key-id: PRE_AWS_ACCESS_KEY_ID
           aws-secret-access-key: PRE_AWS_SECRET_ACCESS_KEY
