@@ -32,8 +32,8 @@ workflows:
 #           container-image-name-updates: 'container=$PRE_CONTAINER_NAME,tag=$PRE_TAG'  
 #           force-new-deployment: true
       - slim/slim:
-          requires:
-             - aws-ecs/deploy-service-update
+#           requires:
+#              - aws-ecs/deploy-service-update
           dockerhub-username: DOCKER_USERNAME
           dockerhub-password: DOCKER_PASSWORD
           slim-ai-username: SLIM_AI_USERNAME
