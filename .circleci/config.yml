@@ -187,7 +187,16 @@ jobs:
           account-url: AWS_ECR_ACCOUNT_URL
           repo: $REPO
           tag: $TAG-slim
+
+workflows:
+  slim_and_push:
+    jobs:
+      - slim:
+          context: plugin
       - aws-ecs/deploy-service-update:
+          context: plugin
+          requires:
+            - slim
           aws-access-key-id: AWS_ACCESS_KEY_ID
           aws-secret-access-key: AWS_SECRET_ACCESS_KEY
           aws-region: AWS_REGION
@@ -196,9 +205,3 @@ jobs:
           cluster-name: SLIM_AWS_CLUSTER_NAME
           container-image-name-updates: "container=$SLIM_AWS_SERVICE_NAME,tag=$TAG-slim"
           force-new-deployment: true
-
-workflows:
-  slim_and_push:
-    jobs:
-      - slim:
-          context: plugin
