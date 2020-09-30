@@ -31,7 +31,8 @@ workflows:
           family: $PRE_FAMILY
           service-name: $PRE_SERVICE_NAME
           cluster-name: $PRE_CLUSTER_NAME
-          container-image-name-updates: 'container=$PRE_CONTAINER_NAME,tag=$PRE_TAG'    
+#           container-image-name-updates: 'container=$PRE_CONTAINER_NAME,tag=$PRE_TAG'  
+          container-image-name-updates: 'container=nginx-web,tag=latest'
           force-new-deployment: true
       - slim/slim:
           requires:
