@@ -2,7 +2,7 @@ version: "2.1"
 description: "a sample orb-abc"
 
 orbs:
-    slimai-dev/slim@dev:first
+    slim: slimai-dev/slim@dev:first
 
 workflows:
   slim_and_push:
