@@ -5,4 +5,4 @@ orbs:
     slim: slimai-dev/slim@dev:third
 
 workflows:
-    - slim/slim_and_push
+    slim/slim_and_push
