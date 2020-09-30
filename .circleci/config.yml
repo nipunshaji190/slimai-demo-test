@@ -5,7 +5,5 @@ orbs:
     slim: slimai-dev/slim@dev:third
 
 workflows:
-  slim_and_push:
-    jobs:
-      - slim/slim_and_push:
-          context: plugin
+   - slim/slim_and_push:
+        context: plugin
