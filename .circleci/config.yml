@@ -27,7 +27,7 @@ workflows:
           context: plugin
           aws-access-key-id: PRE_AWS_ACCESS_KEY_ID
           aws-secret-access-key: PRE_AWS_SECRET_ACCESS_KEY
-          aws-region: PRE_AWS_REGION 
+          aws-region: $PRE_AWS_REGION 
           family: $PRE_FAMILY
           service-name: $PRE_SERVICE_NAME
           cluster-name: $PRE_CLUSTER_NAME
