@@ -18,9 +18,9 @@ workflows:
           dockerfile: Dockerfile
           no-output-timeout: 20m
           region: AWS_REGION
-          repo: $PRE_REPO
+          repo: PRE_REPO
           skip-when-tags-exist: false
-          tag: $TAG
+          tag: TAG
       - aws-ecs/deploy-service-update:
           requires:
             - aws-ecr/build-and-push-image
