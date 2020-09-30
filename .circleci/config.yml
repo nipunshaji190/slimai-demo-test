@@ -25,14 +25,14 @@ workflows:
 #           requires:
 #             - aws-ecr/build-and-push-image
           context: plugin
-          aws-access-key-id: PRE_AWS_ACCESS_KEY_ID
-          aws-secret-access-key: PRE_AWS_SECRET_ACCESS_KEY
+          aws-access-key-id: $PRE_AWS_ACCESS_KEY_ID
+          aws-secret-access-key: $PRE_AWS_SECRET_ACCESS_KEY
           aws-region: $PRE_AWS_REGION 
           family: 'nginx-web'
           service-name: 'nginx-demo-service'
           cluster-name: 'nginx-demo'
 #           container-image-name-updates: 'container=$PRE_CONTAINER_NAME,tag=$PRE_TAG'  
-          container-image-name-updates: 'container=nginx-web,tag=latest'
+          container-image-name-updates: 'container=nginx-demo,tag=latest'
           force-new-deployment: true
 #       - slim/slim:
 #           requires:
