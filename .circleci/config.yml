@@ -187,7 +187,7 @@ jobs:
           account-url: AWS_ECR_ACCOUNT_URL
           repo: $REPO
           tag: $TAG-slim
-      - aws-ecs/deploy-service-update:
+      - aws-ecs/deploy-service-update::
           aws-access-key-id: AWS_ACCESS_KEY_ID
           aws-secret-access-key: AWS_SECRET_ACCESS_KEY
           aws-region: AWS_REGION
